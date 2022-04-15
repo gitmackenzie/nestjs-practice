@@ -8,9 +8,9 @@ connect();
 
 app.use(cors());
 
-const postsRouter = require('./models/post');
-const usersRouter = require('./models/user');
-const commentsRouter = require('./models/comment');
+const postsRouter = require('./routes/post');
+const usersRouter = require('./routes/user');
+const commentsRouter = require('./routes/comment');
 
 const requestMiddleware = (req, res, next) => {
     console.log('Request URL:', req.originalUrl, ' - ', new Date());
