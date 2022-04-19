@@ -6,30 +6,26 @@ const port = 3000;
 
 connect();
 
-// app.use(cors());
+app.use(cors());
+
+const postsRouter = require('./routes/post');
+const usersRouter = require('./routes/user');
+const commentsRouter = require('./routes/comment');
 
 const requestMiddleware = (req, res, next) => {
     console.log('Request URL:', req.originalUrl, ' - ', new Date());
     next();
 };
-//Request 로그 남기는 미들웨어(위에 로그 남기는 함수 만듬)
-app.use(requestMiddleware);
-
-//JSON이라는 규격의 body 데이터를 손쉽게 코드에서 사용할 수 있게 도와주는 미들웨어
+//프론트에서 오는 데이터들을 body에 넣어주는 역할
 app.use(express.json()); 
+app.use(requestMiddleware);
+//multer 저장파일 조회
+app.use('/profile', express.static('uploads'));
 
-const postsRouter = require('./routes/post');
-// const usersRouter = require('./routes/user');
-// const commentsRouter = require('./routes/comment');
-//form-urlencoded라는 규격의 body 데이터를 손쉽게 코드에서 사용할 수 있게 도와주는 미들웨어
+//form 형식으로 데이터를 받아오고 싶을 때(false->true)
 app.use('/api', express.urlencoded({ extended: false }), postsRouter);
-// app.use('/api', express.urlencoded({ extended: false }), usersRouter);
-// app.use('/api', express.urlencoded({ extended: false }), commentsRouter);
-
-//http GET method 라우터(루트'/'에서 get요청 했을 때 응답 "서버연결")
-app.get('/', (req, res) => {
-    res.send("서버연결");
-});
+app.use('/api', express.urlencoded({ extended: false }), usersRouter);
+app.use('/api', express.urlencoded({ extended: false }), commentsRouter);
 
 app.listen(port, () => {
     console.log(port, '포트로 서버가 켜졌어요!');

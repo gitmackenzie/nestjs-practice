@@ -22,10 +22,10 @@ module.exports = (req, res, next) => {
 
     //jwt검증//
     try {
-        const { userId } = jwt.verify(tokenValue, mykey);
+        const { email } = jwt.verify(tokenValue, mykey);
         //검증 성공시 locals에 인증 정보 넣어주기//
-        console.log(userId);
-        User.findOne({ email, userprofile })
+        console.log(email);
+        User.findOne({ email })
             .exec()
             .then((user) => {
                 res.locals.user = user;
