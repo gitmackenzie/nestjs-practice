@@ -17,7 +17,7 @@ const requestMiddleware = (req, res, next) => {
     next();
 };
 //프론트에서 오는 데이터들을 body에 넣어주는 역할
-app.use(express.json()); 
+app.use(express.json());
 app.use(requestMiddleware);
 //multer 저장파일 조회
 app.use('/profile', express.static('uploads'));

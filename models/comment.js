@@ -7,7 +7,6 @@ const commentsSchema = mongoose.Schema({
     },
     nickName: {
         type: String,
-        required: true,
     },
     contents: {
         type: String,
