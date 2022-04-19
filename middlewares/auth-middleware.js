@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
         const { userId } = jwt.verify(tokenValue, mykey);
         //검증 성공시 locals에 인증 정보 넣어주기//
         console.log(userId);
-        User.findOne({ email, userprofile })
+        User.findOne({ email })
             .exec()
             .then((user) => {
                 res.locals.user = user;
