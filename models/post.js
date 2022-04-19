@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 
 const postsSchema = mongoose.Schema({
+    date: {
+        type: String,
+    },
     nickName: {
         type: String,
         required: true,
@@ -13,22 +16,41 @@ const postsSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    postImg: {
-        type: String,
-        required: true,
-    },
     postCharge: {
         type: String,
         required: true,
     },
-    date: {
-        type: String,
-    },
     address: {
         type: String,
+        required: true,
     },
+    // category: {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'Category',
+    //     required: true
+    // },
     room: {
-        type: String,
+        type: Number,
+        required: true,
+    },
+    wifi: {
+        type: Boolean,
+        required: true,
+    },
+    laundry: {
+        type: Boolean,
+        required: true,
+    },
+    parkinglot: {
+        type: Boolean,
+        required: true,
+    },
+    coordinates: {
+        type: Number,
+    },
+    postImg: {
+        type: Array,
+        required: true,
     },
 
 });
