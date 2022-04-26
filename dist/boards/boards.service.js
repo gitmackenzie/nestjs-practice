@@ -14,22 +14,17 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoardsService = void 0;
 const common_1 = require("@nestjs/common");
-const board_status_enum_1 = require("./board.status.enum");
 const board_repository_1 = require("./board.repository");
 const typeorm_1 = require("@nestjs/typeorm");
 let BoardsService = class BoardsService {
     constructor(boardRepository) {
         this.boardRepository = boardRepository;
     }
-    async CreateBoard(createBoardDto) {
-        const { title, desc } = createBoardDto;
-        const board = this.boardRepository.create({
-            title,
-            desc,
-            status: board_status_enum_1.BoardStatus.PUBLIC
-        });
-        await this.boardRepository.save(board);
-        return board;
+    async getAllBoards() {
+        return this.boardRepository.find();
+    }
+    CreateBoard(createBoardDto) {
+        return this.boardRepository.createBoard(createBoardDto);
     }
     async getBoardById(id) {
         const found = await this.boardRepository.findOne(id);
@@ -37,6 +32,18 @@ let BoardsService = class BoardsService {
             throw new common_1.NotFoundException(`${id}를 찾을수가 없습니다.`);
         }
         return found;
+    }
+    async deleteBoard(id) {
+        const result = await this.boardRepository.delete(id);
+        if (result.affected === 0) {
+            throw new common_1.NotFoundException(`${id}를 찾을 수 업습니다`);
+        }
+    }
+    async updateBoardStatus(id, status) {
+        const board = await this.getBoardById(id);
+        board.status = status;
+        await this.boardRepository.save(board);
+        return board;
     }
 };
 BoardsService = __decorate([

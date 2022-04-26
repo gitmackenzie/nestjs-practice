@@ -15,6 +15,11 @@ export class BoardsService {
   //   getAllBoards(): Board[] {
   //     return this.boards;
   //   }
+
+
+  async getAllBoards(): Promise<Board[]> {
+    return this.boardRepository.find();
+  }
   //   createBoard(createBoardDto: CreateBoardDto) {
   //     const { title, desc } = createBoardDto;
   //     const board: Board = {
@@ -27,7 +32,11 @@ export class BoardsService {
   //     return board;
   //   }
 
-  async CreateBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+  // CreateBoard 앞에 async도 await을 더이상 사용하지 않기 때문에 삭제
+    CreateBoard(createBoardDto: CreateBoardDto): Promise<Board> {
+    return this.boardRepository.createBoard(createBoardDto)
+    
+    /* 아래 부분은 repo에서 처리해주기 때문에 삭제, 위로 대체
     const {title, desc} = createBoardDto;
 
     const board = this.boardRepository.create({
@@ -36,8 +45,8 @@ export class BoardsService {
       status: BoardStatus.PUBLIC
     })
 
-    await this.boardRepository.save(board);
-    return board;
+    await this.boardRepository.save(board); 
+    return board;*/
   }
 
   async getBoardById(id: number): Promise<Board> {
@@ -56,6 +65,15 @@ export class BoardsService {
   //     }
   //     return found;
   //   }
+
+
+        async deleteBoard(id: number): Promise<void> {
+          const result = await this.boardRepository.delete(id);
+
+          if(result.affected === 0) {
+            throw new NotFoundException(`${id}를 찾을 수 업습니다`)
+          }
+        }
   //   deleteBoard(id: string): void {
   //     // 리턴할 값이 없기때문에 void타입으로 선언
   //     const found = this.getBoardById(id);
@@ -63,6 +81,16 @@ export class BoardsService {
   //     this.boards = this.boards.filter((board) => board.id != found.id);
   //     // this.boards에 전달받은 id값과 다른것만 남겨서 다시 boards에 넣는다.
   //   }
+
+        async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+          const board = await this.getBoardById(id);
+
+          board.status = status;
+          await this.boardRepository.save(board);
+
+          return board;
+
+        }
   //   updateBoardStatus(id: string, status: BoardStatus): Board {
   //     const board = this.getBoardById(id);
   //     board.status = status;

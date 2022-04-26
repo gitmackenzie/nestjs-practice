@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UsePipes,
@@ -25,6 +26,10 @@ export class BoardsController {
   //   getAllBoard(): Board[] {
   //     return this.boardsService.getAllBoards();
   //   }
+      @Get()
+      getAllBoard(): Promise<Board[]> {
+        return this.boardsService.getAllBoards();
+      }
 
   //   // id값을 받아서 하나의 게시글 가져오기
       @Get('/:id')
@@ -54,6 +59,13 @@ export class BoardsController {
   //     }
   //   }
 
+      @Patch('/:id/status')
+      updateBoardStatus(
+        @Param('id', ParseIntPipe) id: number,
+        @Body('status', BoardStatusValidationPipe) status: BoardStatus
+      ) {
+          return this.boardsService.updateBoardStatus(id, status);
+      }
   //   // 특정 id값으로 게시물 가져와서 상태값 변경하기
   //   @Patch('/:id/status')
   //   updateBoardStatus(
@@ -63,6 +75,10 @@ export class BoardsController {
   //     return this.boardsService.updateBoardStatus(id, status);
   //   }
 
+      @Delete('/:id')
+      deleteBoard(@Param('id', ParseIntPipe) id): Promise<void> {
+        return this.boardsService.deleteBoard(id);
+      }
   //   // 특정 id 값으로 게시물 지우기
   //   @Delete('/:id')
   //   deleteBoard(@Param('id') id: string): void {
