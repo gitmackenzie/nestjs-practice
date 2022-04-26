@@ -10,6 +10,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { title } from 'process';
+import { Board } from './board.entity';
 import { BoardStatus } from './board.status.enum';
 import { BoardsService } from './boards.service';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -26,6 +27,10 @@ export class BoardsController {
   //   }
 
   //   // id값을 받아서 하나의 게시글 가져오기
+      @Get('/:id')
+      getBoardById(@Param('id') id:number) : Promise<Board> {
+        return this.boardsService.getBoardById(id);
+      }
   //   @Get('/:id')
   //   getBoardById(@Param('id') id: string): Board {
   //     // 여러가지 값이 들어있을때 @Param() param: string 이라고 해두면 특정값을 뒤에서 지정해서 사용 가능
@@ -34,7 +39,13 @@ export class BoardsController {
   //   }
 
   //   // 게시물 생성
-  //   @Post()
+      @Post()
+      @UsePipes(ValidationPipe)
+      createBoard(@Body() CreateBoardDto: CreateBoardDto): Promise<Board> {
+      // 영상에서는 return this.boardsService.createBoard(CreateBoardDto);
+        return this.boardsService.CreateBoard(CreateBoardDto);
+      }
+  //   @Post() 
   //   @UsePipes(ValidationPipe)
   //   createBoard(@Body() createBoardDto: CreateBoardDto): Board {
   //     // 리턴되는 게시글이 하나라서 Board[]가 아닌 Board를 타입으로 지정

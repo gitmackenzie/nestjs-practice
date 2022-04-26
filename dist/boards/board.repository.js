@@ -6,18 +6,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
-const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const boards_module_1 = require("./boards/boards.module");
-const typeorm_config_1 = require("./configs/typeorm.config");
-let AppModule = class AppModule {
+exports.BoardRepository = void 0;
+const typeorm_1 = require("typeorm");
+const board_entity_1 = require("./board.entity");
+let BoardRepository = class BoardRepository extends typeorm_1.Repository {
 };
-AppModule = __decorate([
-    (0, common_1.Module)({
-        imports: [typeorm_1.TypeOrmModule.forRoot(typeorm_config_1.typeORMConfig), boards_module_1.BoardsModule],
-        providers: [],
-    })
-], AppModule);
-exports.AppModule = AppModule;
-//# sourceMappingURL=app.module.js.map
+BoardRepository = __decorate([
+    (0, typeorm_1.EntityRepository)(board_entity_1.Board)
+], BoardRepository);
+exports.BoardRepository = BoardRepository;
+//# sourceMappingURL=board.repository.js.map

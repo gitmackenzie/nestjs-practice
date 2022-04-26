@@ -1,10 +1,9 @@
-import { Board, BoardStatus } from './board.model';
 import { CreateBoardDto } from './dto/create-board.dto';
+import { BoardRepository } from './board.repository';
+import { Board } from './board.entity';
 export declare class BoardsService {
-    private boards;
-    getAllBoards(): Board[];
-    createBoard(createBoardDto: CreateBoardDto): Board;
-    getBoardById(id: string): Board;
-    deleteBoard(id: string): void;
-    updateBoardStatus(id: string, status: BoardStatus): Board;
+    private boardRepository;
+    constructor(boardRepository: BoardRepository);
+    CreateBoard(createBoardDto: CreateBoardDto): Promise<Board>;
+    getBoardById(id: number): Promise<Board>;
 }
