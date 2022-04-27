@@ -20,11 +20,14 @@ let BoardsService = class BoardsService {
     constructor(boardRepository) {
         this.boardRepository = boardRepository;
     }
-    async getAllBoards() {
-        return this.boardRepository.find();
+    async getAllBoards(user) {
+        const query = this.boardRepository.createQueryBuilder('board');
+        query.where('board.userId = :userId', { userId: user.id });
+        const boards = await query.getMany();
+        return boards;
     }
-    CreateBoard(createBoardDto) {
-        return this.boardRepository.createBoard(createBoardDto);
+    CreateBoard(createBoardDto, user) {
+        return this.boardRepository.createBoard(createBoardDto, user);
     }
     async getBoardById(id) {
         const found = await this.boardRepository.findOne(id);
@@ -33,8 +36,8 @@ let BoardsService = class BoardsService {
         }
         return found;
     }
-    async deleteBoard(id) {
-        const result = await this.boardRepository.delete(id);
+    async deleteBoard(id, user) {
+        const result = await this.boardRepository.delete({ id, user });
         if (result.affected === 0) {
             throw new common_1.NotFoundException(`${id}를 찾을 수 업습니다`);
         }

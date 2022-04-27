@@ -5,6 +5,7 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardRepository } from './board.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Board } from './board.entity';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class BoardsService {
@@ -17,8 +18,16 @@ export class BoardsService {
   //   }
 
 
-  async getAllBoards(): Promise<Board[]> {
-    return this.boardRepository.find();
+  async getAllBoards(
+    user: User
+  ): Promise<Board[]> {
+    const query = this.boardRepository.createQueryBuilder('board');
+
+    query.where('board.userId = :userId', {userId: user.id});
+
+    const boards = await query.getMany();
+
+    return boards;
   }
   //   createBoard(createBoardDto: CreateBoardDto) {
   //     const { title, desc } = createBoardDto;
@@ -33,8 +42,8 @@ export class BoardsService {
   //   }
 
   // CreateBoard 앞에 async도 await을 더이상 사용하지 않기 때문에 삭제
-    CreateBoard(createBoardDto: CreateBoardDto): Promise<Board> {
-    return this.boardRepository.createBoard(createBoardDto)
+    CreateBoard(createBoardDto: CreateBoardDto, user: User): Promise<Board> {
+    return this.boardRepository.createBoard(createBoardDto, user)
     
     /* 아래 부분은 repo에서 처리해주기 때문에 삭제, 위로 대체
     const {title, desc} = createBoardDto;
@@ -67,8 +76,8 @@ export class BoardsService {
   //   }
 
 
-        async deleteBoard(id: number): Promise<void> {
-          const result = await this.boardRepository.delete(id);
+        async deleteBoard(id: number, user: User): Promise<void> {
+          const result = await this.boardRepository.delete({id, user});
 
           if(result.affected === 0) {
             throw new NotFoundException(`${id}를 찾을 수 업습니다`)
