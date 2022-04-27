@@ -1,5 +1,6 @@
 import { AuthService } from './auth.service';
 import { AuthCredentialDto } from './dto/auth-credential.dto';
+import { User } from './user.entity';
 export declare class AuthController {
     private authService;
     constructor(authService: AuthService);
@@ -7,5 +8,5 @@ export declare class AuthController {
     signIn(authCredentialDto: AuthCredentialDto): Promise<{
         accessToken: string;
     }>;
-    test(req: any): void;
+    test(user: User): void;
 }

@@ -14,6 +14,9 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BoardsController = void 0;
 const common_1 = require("@nestjs/common");
+const passport_1 = require("@nestjs/passport");
+const get_user_decorator_1 = require("../auth/get-user.decorator");
+const user_entity_1 = require("../auth/user.entity");
 const board_status_enum_1 = require("./board.status.enum");
 const boards_service_1 = require("./boards.service");
 const create_board_dto_1 = require("./dto/create-board.dto");
@@ -21,27 +24,32 @@ const board_status_validation_pipe_1 = require("./pipes/board-status-validation.
 let BoardsController = class BoardsController {
     constructor(boardsService) {
         this.boardsService = boardsService;
+        this.logger = new common_1.Logger('BoardsController');
     }
-    getAllBoard() {
-        return this.boardsService.getAllBoards();
+    getAllBoard(user) {
+        this.logger.verbose(`${user.username}이 작성한 게시글입니다`);
+        return this.boardsService.getAllBoards(user);
     }
     getBoardById(id) {
         return this.boardsService.getBoardById(id);
     }
-    createBoard(CreateBoardDto) {
-        return this.boardsService.CreateBoard(CreateBoardDto);
+    createBoard(createBoardDto, user) {
+        this.logger.verbose(`사용자 ${user.username}이 게시글을 작성했습니다
+        Payload: ${JSON.stringify(createBoardDto)}`);
+        return this.boardsService.CreateBoard(createBoardDto, user);
     }
     updateBoardStatus(id, status) {
         return this.boardsService.updateBoardStatus(id, status);
     }
-    deleteBoard(id) {
-        return this.boardsService.deleteBoard(id);
+    deleteBoard(id, user) {
+        return this.boardsService.deleteBoard(id, user);
     }
 };
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], BoardsController.prototype, "getAllBoard", null);
 __decorate([
@@ -55,8 +63,10 @@ __decorate([
     (0, common_1.Post)(),
     (0, common_1.UsePipes)(common_1.ValidationPipe),
     __param(0, (0, common_1.Body)()),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_board_dto_1.CreateBoardDto]),
+    __metadata("design:paramtypes", [create_board_dto_1.CreateBoardDto,
+        user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], BoardsController.prototype, "createBoard", null);
 __decorate([
@@ -70,12 +80,14 @@ __decorate([
 __decorate([
     (0, common_1.Delete)('/:id'),
     __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, get_user_decorator_1.GetUser)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [Object, user_entity_1.User]),
     __metadata("design:returntype", Promise)
 ], BoardsController.prototype, "deleteBoard", null);
 BoardsController = __decorate([
     (0, common_1.Controller)('boards'),
+    (0, common_1.UseGuards)((0, passport_1.AuthGuard)()),
     __metadata("design:paramtypes", [boards_service_1.BoardsService])
 ], BoardsController);
 exports.BoardsController = BoardsController;

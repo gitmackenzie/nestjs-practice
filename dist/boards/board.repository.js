@@ -11,12 +11,13 @@ const typeorm_1 = require("typeorm");
 const board_status_enum_1 = require("./board.status.enum");
 const board_entity_1 = require("./board.entity");
 let BoardRepository = class BoardRepository extends typeorm_1.Repository {
-    async createBoard(createBoardDto) {
+    async createBoard(createBoardDto, user) {
         const { title, desc } = createBoardDto;
         const board = this.create({
             title,
             desc,
-            status: board_status_enum_1.BoardStatus.PUBLIC
+            status: board_status_enum_1.BoardStatus.PUBLIC,
+            user
         });
         await this.save(board);
         return board;

@@ -3,14 +3,19 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { title } from 'process';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 import { Board } from './board.entity';
 import { BoardStatus } from './board.status.enum';
 import { BoardsService } from './boards.service';
@@ -18,7 +23,9 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { BoardStatusValidationPipe } from './pipes/board-status-validation.pipe';
 
 @Controller('boards')
+@UseGuards(AuthGuard())
 export class BoardsController {
+  private logger = new Logger('BoardsController')
   constructor(private boardsService: BoardsService) {}
 
   // 전체 게시글 가져오기
@@ -27,8 +34,11 @@ export class BoardsController {
   //     return this.boardsService.getAllBoards();
     // }
       @Get()
-      getAllBoard(): Promise<Board[]> {
-        return this.boardsService.getAllBoards();
+      getAllBoard(
+        @GetUser() user: User
+      ): Promise<Board[]> {
+        this.logger.verbose(`${user.username}이 작성한 게시글입니다`);
+        return this.boardsService.getAllBoards(user);
       }
 
   //   // id값을 받아서 하나의 게시글 가져오기
@@ -46,9 +56,12 @@ export class BoardsController {
   //   // 게시물 생성
       @Post()
       @UsePipes(ValidationPipe)
-      createBoard(@Body() CreateBoardDto: CreateBoardDto): Promise<Board> {
-      // 영상에서는 return this.boardsService.createBoard(CreateBoardDto);
-        return this.boardsService.CreateBoard(CreateBoardDto);
+      createBoard(@Body() createBoardDto: CreateBoardDto,
+      @GetUser() user:User): Promise<Board> {
+        this.logger.verbose(`사용자 ${user.username}이 게시글을 작성했습니다
+        Payload: ${JSON.stringify(createBoardDto)}`);
+        // 영상에서는 return this.boardsService.createBoard(CreateBoardDto);
+        return this.boardsService.CreateBoard(createBoardDto, user);
       }
   //   @Post() 
   //   @UsePipes(ValidationPipe)
@@ -76,8 +89,10 @@ export class BoardsController {
   //   }
 
       @Delete('/:id')
-      deleteBoard(@Param('id', ParseIntPipe) id): Promise<void> {
-        return this.boardsService.deleteBoard(id);
+      deleteBoard(@Param('id', ParseIntPipe) id,
+      @GetUser() user: User
+      ): Promise<void> {
+        return this.boardsService.deleteBoard(id, user);
       }
   //   // 특정 id 값으로 게시물 지우기
   //   @Delete('/:id')
